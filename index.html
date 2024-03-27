@@ -39,10 +39,13 @@
                 <div class="row">
                     <div class="col-7"></div>
                     <div class="col text-end">
-                        <a href="#endereco" class="fs-5 link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Endereços</a>
+                        <a href="#endereco"
+                            class="fs-5 link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Endereços</a>
                     </div>
                     <div class="col text-end">
-                        <a href="#previsaoTempo" class="fs-5 link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Previsão do tempo</a>
+                        <a href="#previsaoTempo"
+                            class="fs-5 link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Previsão
+                            do tempo</a>
                     </div>
                 </div>
             </div>
@@ -61,14 +64,14 @@
             </div>
         </div>
     </section>
-
+    
     <div class="row mt-5">
         <div class="col-2"></div>
         <div id="formulario" class="col-8 bg-white rounded-5 pb-3">
             <div class="row mt-5">
                 <div class="col-2"></div>
                 <div class="col-8">
-                    <form action="https://api.sheetmonkey.io/form/oPg7nkHmbmCk1YLnGuxduj" method="post">
+                    <form action="https://api.sheetmonkey.io/form/oPg7nkHmbmCk1YLnGuxduj" method="post" >
                         <label class="ms-1 pb-2 fs-5">Primeiro Nome:</label>
                         <div class="form-floating mb-3">
                             <input type="name" class="form-control" id="nome" name="Name">
@@ -88,15 +91,16 @@
 
                         <div class="row">
                             <div class="form-floating mb-3 col">
-                                <input type="number" class="form-control" id="latitude">
+                                <input type="text" class="form-control" id="latitude">
                                 <label for="floatingInput" class="ms-2">Latitude</label>
                             </div>
                             <div class="form-floating mb-3 col">
-                                <input type="number" class="form-control" id="longitude">
+                                <input type="text" class="form-control" id="longitude">
                                 <label for="floatingInput" class="ms-2">Longitude</label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-3 mb-3 col-12">Acessar</button>
+                        <button type="submit" class="btn btn-primary mt-3 mb-3 col-12" onclick="twoGet()">Acessar</button>
+                        
                     </form>
                 </div>
             </div>
@@ -130,9 +134,15 @@
         <div class="col-2"></div>
         <div class="col-8 bg-white rounded-bottom-4 text-center pb-2 pt-2">
             <div class="row">
-                <div class="col">Justino Cobra</div>
-                <div class="col">Vila Ema</div>
-                <div class="col">SP</div>
+                <div class="col">
+                    <p id="logradouro">Justino Cobra</p>
+                </div>
+                <div class="col">
+                    <p id="bairro">Vila Ema</p>
+                </div>
+                <div class="col">
+                    <p id="uf">SP</p>
+                </div>
             </div>
         </div>
     </div>
@@ -155,7 +165,7 @@
             <div class="row mt-3">
                 <div class="col-2"></div>
                 <div class="col-8">
-                    <p class="fs-5 fw-bold">Previsão de tempo de acordo com a região: 24° C</p>
+                    <p id="previsao" class="fs-5 fw-bold">Previsão de tempo de acordo com a região: 24° C</p>
                 </div>
             </div>
         </div>
@@ -171,7 +181,7 @@
 
 
 
-    
+
 
 
 
@@ -182,15 +192,20 @@
 
 
     <script>
+        function twoGet(){
+            getAddressByCep();
+            getPrevisao();
+        }
+
         async function getAddressByCep() {
             const cep = document.getElementById('cep').value;
             try {
                 const response = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
                 const data = await response.json();
                 console.log(data);
-                document.getElementById('rua').value = data.logradouro;
-                document.getElementById('bairro').value = data.bairro;
-                document.getElementById('cidade').value = data.localidade;
+                document.getElementById('logradouro').innerHTML = data.logradouro;
+                document.getElementById('bairro').innerHTML = data.bairro;
+                document.getElementById('uf').innerHTML = data.uf;
             } catch (error) {
                 alert(error.message);
             }
@@ -203,11 +218,7 @@
                 const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + long + '&hourly=temperature_2m');
                 const data = await response.json();
                 console.log(data);
-
-                for (let index = 0; index < data.hourly.temperature_2m.length; index++) {
-                    document.getElementById('resposta').innerHTML += '<div>' + data.hourly.time[index] + ' <-> ' + data.hourly.temperature_2m[index] + '</div>'
-                }
-
+                document.getElementById('previsao').innerHTML = 'Previsão de tempo de acordo com a região: ' + data.hourly.temperature_2m[12] + '° C'
             } catch (error) {
                 alert(error.message);
             }
